@@ -1,75 +1,68 @@
-import streamlit as st
-import re # Librería para buscar patrones de texto (regex)
+#para ejecutar hay que poner el comando streamlit run app.py en la terminal
 
-# Configuración de la página (título e ícono en la pestaña del navegador)
-st.set_page_config(page_title="Prototipo CalcBot IO", page_icon="🤖")
+import streamlit as st #esta es la libreria para crear la interfaz web del bot de chat
+import re #libreria para buscar patrones de texto (regex)
 
+#config de la pagina
+#este seria el titulo que aparece en la pestaña del navegador y el icono que se muestra al lado del titulo
+st.set_page_config(page_title="Prototipo ChatBot IO", page_icon="🤖") #titulo e icono
+
+#titulo y descripcion
 st.title("🤖 Asistente de Cálculo - Prototipo")
 st.markdown("Este es un bot dummy. Intenta escribir frases como: *'Suma 5 y 3'* o *'resta 10 a 20'*.")
 
-# ---------------------------------------------------------
-# LÓGICA DEL BOT (El "cerebro" simplificado)
-# ---------------------------------------------------------
+#logica del bot
 def procesar_respuesta(entrada_usuario):
-    """
-    Analiza el texto del usuario buscando números y palabras clave (suma/resta).
-    Devuelve la respuesta del bot.
-    """
-    entrada = entrada_usuario.lower()
+    #aca analiza el texto del usuario y busca numeros y palabras clave para decidir si sumar o restar
+    entrada = entrada_usuario.lower() #lo vuelve minuscula todo
     
-    # Buscamos todos los números en el texto
+    #buscar los numeros en el texto ingresado
     numeros = re.findall(r'\d+', entrada)
     
-    # Si no hay al menos dos números, no podemos operar
+    #si no hay al menos dos numeros no se puede hacer la operacion
     if len(numeros) < 2:
         return "Para probar este prototipo, por favor ingresa al menos dos números. Ej: 'Suma 10 y 5'."
 
-    # Convertimos los textos encontrados a enteros
+    #convertir los numeros encontrados en el texto a enteros para poder operar con ellos
     num1 = int(numeros[0])
     num2 = int(numeros[1])
 
-    # Lógica de detección de operación
-    if "suma" in entrada or "+" in entrada or "mas" in entrada:
-        resultado = num1 + num2
-        return f"¡Claro! La suma de {num1} y {num2} es **{resultado}**."
+    #decidir si sumar o restar dependiendo de las palabras clave que se ingresaron (tiene en cuenta la primera)
+    if "suma" in entrada or "+" in entrada or "mas" in entrada: #si la palabra es suma o un signo de + o escribe la palabra mas
+        resultado = num1 + num2 #sumar
+        return f"La suma de {num1} y {num2} es **{resultado}**. :3"
     
     elif "resta" in entrada or "-" in entrada or "menos" in entrada:
-        # Una lógica simple de resta (el primero menos el segundo)
-        resultado = num1 - num2
-        return f"Entendido. La resta de {num1} menos {num2} es **{resultado}**."
+        resultado = num1 - num2 #restar
+        return f"La resta de {num1} menos {num2} es **{resultado}**. :3"
     
     else:
         return f"Detecté los números {num1} y {num2}, pero no entendí si quieres sumarlos o restarlos. Intenta decir 'Suma' o 'Resta'."
 
-# ---------------------------------------------------------
-# INTERFAZ DE CHAT (Estilo Gemini/ChatGPT)
-# ---------------------------------------------------------
-
-# 1. Inicializar el historial de chat en la sesión si no existe
-# Esto es vital en Streamlit para que los mensajes no desaparezcan al recargar
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "Hola 👋, soy un prototipo. ¿Qué números quieres sumar o restar hoy?"}
+#INTERFAZ DE CHAT
+#inicializar el historial de chat en la sesion si no existe
+if "messages" not in st.session_state: #si no hay mensajes en la sesion actual
+    st.session_state.messages = [#iniciar un chat nuevo, o sea mandar mensajes
+        {"role": "assistant", "content": "Hola 👋, soy un prototipo. ¿Qué números quieres sumar o restar?"}
     ]
 
-# 2. Mostrar los mensajes anteriores del historial
-for message in st.session_state.messages:
+#mostrar mensajes anteriores del chat 
+for message in st.session_state.messages: #si hay mensajes en la sesion, mostrarlos
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# 3. Capturar la entrada del usuario (Cuadro de texto FIJO ABAJO)
-# El operador := asigna la entrada a la variable 'prompt' si no está vacía
-if prompt := st.chat_input("Escribe tu consulta aquí..."):
+#cuadro de texto para ingresar mensajes del usuario
+if prompt := st.chat_input("Escribi tu consulta aca..."):
     
-    # A. Guardar y mostrar el mensaje del usuario
+    #guardar y mostrar el mensaje del usuario
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # B. Generar la respuesta del bot usando la lógica definida arriba
+    #respuesta del bot
     respuesta_bot = procesar_respuesta(prompt)
 
-    # C. Guardar y mostrar la respuesta del bot
+    #guardar y mostrar la respuesta del bot
     with st.chat_message("assistant"):
         st.markdown(respuesta_bot)
     st.session_state.messages.append({"role": "assistant", "content": respuesta_bot})
