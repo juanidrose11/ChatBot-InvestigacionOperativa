@@ -3,6 +3,16 @@
 import streamlit as st #esta es la libreria para crear la interfaz web del bot de chat
 import re #libreria para buscar patrones de texto (regex)
 
+#esto es para ocultar el header y el footer de streamlit q ya trae por defecto
+ocultar_st = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(ocultar_st, unsafe_allow_html=True)
+
 #config de la pagina
 #este seria el titulo que aparece en la pestaña del navegador y el icono que se muestra al lado del titulo
 st.set_page_config(page_title="Prototipo ChatBot IO", page_icon="🤖") #titulo e icono
