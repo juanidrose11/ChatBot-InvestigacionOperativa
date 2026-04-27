@@ -1,0 +1,58 @@
+{
+  "metodos": {
+    "programacion_estocastica": {
+      "nombre": "Programación Estocástica",
+      "porque": "Tu problema involucra incertidumbre o datos que varían aleatoriamente.",
+      "alcance": "Permite obtener soluciones robustas considerando múltiples escenarios posibles.",
+      "supuesto": "Se conocen las distribuciones de probabilidad o escenarios posibles."
+    },
+    "programacion_convexa": {
+      "nombre": "Programación Convexa",
+      "porque": "Tanto la función objetivo como las restricciones cumplen con propiedades de convexidad.",
+      "alcance": "Garantiza encontrar el óptimo global de manera eficiente.",
+      "supuesto": "Función objetivo convexa (mín) y región de factibilidad convexa."
+    },
+    "prog_cuadratica_wolfe": {
+      "nombre": "Programación Cuadrática (Método de Wolfe)",
+      "porque": "Tu función objetivo es cuadrática y las restricciones son lineales.",
+      "alcance": "Resuelve problemas de optimización cuadrática de forma exacta.",
+      "supuesto": "Restricciones lineales y función objetivo de segundo grado."
+    },
+    "programacion_geometrica": {
+      "nombre": "Programación Geométrica",
+      "porque": "El modelo se basa en posinomios y variables estrictamente positivas.",
+      "alcance": "Ideal para diseño de ingeniería con relaciones multiplicativas.",
+      "supuesto": "Variables > 0 y estructura de posinomios."
+    },
+    "frank_wolfe": {
+      "nombre": "Método de Frank-Wolfe (Frank-Wolfe)",
+      "porque": "Tienes restricciones lineales pero un objetivo no lineal complejo.",
+      "alcance": "Obtiene soluciones eficientes mediante subproblemas lineales iterativos.",
+      "supuesto": "Función objetivo continuamente diferenciable."
+    },
+    "pnl_general": {
+      "nombre": "Programación No Lineal General (PNL General)",
+      "porque": "El problema no presenta una estructura específica que permita usar métodos simplificados.",
+      "alcance": "Busca soluciones óptimas locales utilizando algoritmos de descenso.",
+      "supuesto": "Puede requerir múltiples puntos de inicio para encontrar un óptimo global."
+    }
+  },
+  "guia_resolucion": [
+    {"paso": "Parametrización", "descripcion": "Define los parámetros constantes del problema (costos unitarios, capacidades, etc.)."},
+    {"paso": "Identificar datos", "descripcion": "Recolecta y organiza toda la información numérica necesaria."},
+    {"paso": "Mapeo de variables", "descripcion": "Relaciona los elementos del problema real con variables abstractas."},
+    {"paso": "Variables de decisión", "descripcion": "Define qué es lo que el modelo debe decidir (ej: cuánto producir)."},
+    {"paso": "Modelo matemático", "descripcion": "Estructura la lógica del problema en términos de ecuaciones."},
+    {"paso": "Función Objetivo y restricciones", "descripcion": "Define qué quieres optimizar y qué límites tienes."},
+    {"paso": "Validación", "descripcion": "Verifica que el modelo represente fielmente la realidad."},
+    {"paso": "Modelo final", "descripcion": "Presenta el modelo listo para ser resuelto por un software."}
+  ],
+  "explicacion_conceptos": {
+    "simple": "La optimización no lineal trata de encontrar el mejor valor cuando las relaciones no son proporcionales (rectas).",
+    "caso_practico": "Imagina que el costo de energía no es constante, sino que aumenta exponencialmente con el uso.",
+    "ejemplo_estandar": "Un ejemplo común es la minimización del área de un envase para un volumen dado.",
+    "implicancia": "Esto permite ahorrar recursos donde los modelos lineales fallan por ser demasiado simples.",
+    "matematica_formal": "Matemática Formal: Min f(x) sujeto a g_i(x) <= 0, donde f o g_i no son funciones lineales (afines).",
+    "resumen_simple": "Resumen Simple: Buscamos el punto más óptimo en una 'curva' compleja respetando ciertos límites."
+  }
+}
