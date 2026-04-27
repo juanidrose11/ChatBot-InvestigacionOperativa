@@ -50,7 +50,7 @@ def detectar_si_no(texto):
     texto = texto.lower()
     if any(p in texto for p in ["sí", "si", "claro", "por supuesto", "dale", "ok", "fijos", "antemano", "polinómica"]):
         return "si"
-    if any(p in texto for p in ["no", "negativo", "para nada", "aleatorios", "incierta"]):
+    if any(p in texto for p in ["no", "negativo", "para nada", "incierta"]):
         return "no"
     return None
 
@@ -65,10 +65,10 @@ def procesar_clasificar(entrada):
     respuesta = detectar_si_no(entrada)
     
     if step == 1:
-        if respuesta == "si":
+        if "aleatorios" in entrada.lower() or "aleatorio" in entrada.lower():
             reset_state()
             return formatear_metodo("programacion_estocastica")
-        elif respuesta == "no":
+        elif "incertidumbre" in entrada.lower():
             st.session_state.step = 2
             return "¿Tus restricciones son lineales?"
         else:
@@ -108,7 +108,7 @@ def procesar_clasificar(entrada):
         else:
             return formatear_metodo("pnl_general")
 
-# --- FLUJO RESOLVER ---
+# --- FLUJO RESOLVER --- esto no se che
 def procesar_resolver(entrada):
     guia = conocimientos.get("guia_resolucion", [])
     step = st.session_state.step
