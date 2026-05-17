@@ -2,57 +2,260 @@
   "metodos": {
     "programacion_estocastica": {
       "nombre": "Programación Estocástica",
-      "porque": "Tu problema involucra incertidumbre o datos que varían aleatoriamente.",
-      "alcance": "Permite obtener soluciones robustas considerando múltiples escenarios posibles.",
-      "supuesto": "Se conocen las distribuciones de probabilidad o escenarios posibles."
+      "porque": "Tu problema involucra incertidumbre, escenarios futuros o datos que varían aleatoriamente, como demanda, costos, tiempos o disponibilidad de recursos.",
+      "alcance": "Permite modelar decisiones bajo incertidumbre mediante escenarios, probabilidades o distribuciones. Es útil cuando una decisión debe tomarse antes de conocer completamente el resultado aleatorio.",
+      "supuesto": "Se conocen o pueden estimarse escenarios, probabilidades o distribuciones de los datos inciertos. También debe definirse si se busca minimizar costo esperado, riesgo, pérdida esperada o una combinación de criterios.",
+      "criterios_modelado": "Identificar variables de primera etapa, variables de recourse o segunda etapa, escenarios posibles, probabilidades asociadas y criterio de decisión esperado.",
+      "salida_esperada": "Una política o decisión recomendada que considera la incertidumbre, junto con el valor esperado de la función objetivo y el desempeño por escenario."
     },
     "programacion_convexa": {
       "nombre": "Programación Convexa",
       "porque": "Tanto la función objetivo como las restricciones cumplen con propiedades de convexidad.",
       "alcance": "Garantiza encontrar el óptimo global de manera eficiente.",
-      "supuesto": "Función objetivo convexa (mín) y región de factibilidad convexa."
+      "supuesto": "Función objetivo convexa para minimización y región de factibilidad convexa.",
+      "salida_esperada": "Un óptimo global, el valor óptimo de la función objetivo y los valores de las variables de decisión."
     },
     "prog_cuadratica_wolfe": {
       "nombre": "Programación Cuadrática (Método de Wolfe)",
       "porque": "Tu función objetivo es cuadrática y las restricciones son lineales.",
       "alcance": "Resuelve problemas de optimización cuadrática de forma exacta.",
-      "supuesto": "Restricciones lineales y función objetivo de segundo grado."
+      "supuesto": "Restricciones lineales y función objetivo de segundo grado.",
+      "salida_esperada": "Una solución óptima candidata, el valor de la función cuadrática y la verificación de condiciones de optimalidad."
     },
     "programacion_geometrica": {
       "nombre": "Programación Geométrica",
       "porque": "El modelo se basa en posinomios y variables estrictamente positivas.",
       "alcance": "Ideal para diseño de ingeniería con relaciones multiplicativas.",
-      "supuesto": "Variables > 0 y estructura de posinomios."
+      "supuesto": "Variables mayores que cero y estructura de posinomios.",
+      "salida_esperada": "Valores positivos de las variables que optimizan el modelo transformado y el valor óptimo asociado."
+    },
+    "combinaciones_lineales": {
+      "nombre": "Método de Combinaciones Lineales",
+      "porque": "Tu problema tiene varios objetivos o criterios y se desea integrarlos en una única función objetivo ponderada.",
+      "alcance": "Permite transformar un problema multicriterio en un modelo de optimización con una función objetivo compuesta por una suma ponderada de criterios.",
+      "supuesto": "Los objetivos pueden expresarse en una escala comparable o normalizarse, y los pesos asignados representan la importancia relativa de cada criterio.",
+      "criterios_modelado": "Definir los objetivos individuales, normalizarlos si usan unidades diferentes, asignar pesos y construir una función objetivo única como combinación lineal.",
+      "salida_esperada": "Una solución de compromiso, el valor de cada criterio individual y el valor agregado ponderado de la función objetivo."
     },
     "frank_wolfe": {
-      "nombre": "Método de Frank-Wolfe (Frank-Wolfe)",
+      "nombre": "Método de Frank-Wolfe",
       "porque": "Tienes restricciones lineales pero un objetivo no lineal complejo.",
       "alcance": "Obtiene soluciones eficientes mediante subproblemas lineales iterativos.",
-      "supuesto": "Función objetivo continuamente diferenciable."
+      "supuesto": "Función objetivo continuamente diferenciable.",
+      "salida_esperada": "Una sucesión de soluciones factibles que converge a una solución óptima o aproximada, junto con el valor de la función objetivo por iteración."
     },
     "pnl_general": {
       "nombre": "Programación No Lineal General (PNL General)",
       "porque": "El problema no presenta una estructura específica que permita usar métodos simplificados.",
       "alcance": "Busca soluciones óptimas locales utilizando algoritmos de descenso.",
-      "supuesto": "Puede requerir múltiples puntos de inicio para encontrar un óptimo global."
+      "supuesto": "Puede requerir múltiples puntos de inicio para encontrar un óptimo global.",
+      "salida_esperada": "Una solución local o aproximada, el valor objetivo obtenido y una advertencia sobre la posible existencia de otros óptimos."
     }
   },
-  "guia_resolucion": [
-    {"paso": "Parametrización", "descripcion": "Define los parámetros constantes del problema (costos unitarios, capacidades, etc.)."},
-    {"paso": "Identificar datos", "descripcion": "Recolecta y organiza toda la información numérica necesaria."},
-    {"paso": "Mapeo de variables", "descripcion": "Relaciona los elementos del problema real con variables abstractas."},
-    {"paso": "Variables de decisión", "descripcion": "Define qué es lo que el modelo debe decidir (ej: cuánto producir)."},
-    {"paso": "Modelo matemático", "descripcion": "Estructura la lógica del problema en términos de ecuaciones."},
-    {"paso": "Función Objetivo y restricciones", "descripcion": "Define qué quieres optimizar y qué límites tienes."},
-    {"paso": "Validación", "descripcion": "Verifica que el modelo represente fielmente la realidad."},
-    {"paso": "Modelo final", "descripcion": "Presenta el modelo listo para ser resuelto por un software."}
-  ],
-  "explicacion_conceptos": {
-    "simple": "La optimización no lineal trata de encontrar el mejor valor cuando las relaciones no son proporcionales (rectas).",
-    "caso_practico": "Imagina que el costo de energía no es constante, sino que aumenta exponencialmente con el uso.",
-    "ejemplo_estandar": "Un ejemplo común es la minimización del área de un envase para un volumen dado.",
-    "implicancia": "Esto permite ahorrar recursos donde los modelos lineales fallan por ser demasiado simples.",
-    "matematica_formal": "Matemática Formal: Min f(x) sujeto a g_i(x) <= 0, donde f o g_i no son funciones lineales (afines).",
-    "resumen_simple": "Resumen Simple: Buscamos el punto más óptimo en una 'curva' compleja respetando ciertos límites."
+  "guia_resolucion": {
+    "default": [
+      {
+        "paso": "Parametrización",
+        "descripcion": "Define los parámetros constantes del problema."
+      },
+      {
+        "paso": "Variables de decisión",
+        "descripcion": "Define qué debe decidir el modelo."
+      },
+      {
+        "paso": "Función objetivo y restricciones",
+        "descripcion": "Define qué querés optimizar y los límites."
+      },
+      {
+        "paso": "Validación",
+        "descripcion": "Verificá que el modelo represente la situación real."
+      },
+      {
+        "paso": "Modelo final",
+        "descripcion": "Presentá el modelo listo para resolver."
+      }
+    ],
+    "programacion_estocastica": [
+      {
+        "paso": "Identificar variables de primera etapa",
+        "descripcion": "Son las decisiones que se toman antes de conocer el resultado aleatorio (ej: cuánto stockear antes de conocer la demanda)."
+      },
+      {
+        "paso": "Definir escenarios y probabilidades",
+        "descripcion": "Listá los posibles escenarios del parámetro incierto y asignale una probabilidad a cada uno. Verificá que sumen 1."
+      },
+      {
+        "paso": "Definir variables de recourse (segunda etapa)",
+        "descripcion": "Son las acciones correctivas que se toman después de observar el escenario (ej: comprar de emergencia, descartar excedente)."
+      },
+      {
+        "paso": "Formular la función objetivo",
+        "descripcion": "Expresá el costo o beneficio total como el valor esperado sobre todos los escenarios: min E[f(x, ξ)] = Σ p_s · f(x, ξ_s)."
+      },
+      {
+        "paso": "Plantear las restricciones",
+        "descripcion": "Incluí las restricciones de primera etapa (generales) y las de segunda etapa (dependientes del escenario)."
+      },
+      {
+        "paso": "Resolver y analizar por escenario",
+        "descripcion": "Resolvé el modelo y analizá el desempeño de la solución bajo cada escenario. Calculá el Valor de la Información Perfecta (VIP) si aplica."
+      }
+    ],
+    "combinaciones_lineales": [
+      {
+        "paso": "Identificar los objetivos individuales",
+        "descripcion": "Listá cada criterio que querés optimizar (ej: minimizar costo, maximizar calidad, minimizar tiempo)."
+      },
+      {
+        "paso": "Normalizar los objetivos",
+        "descripcion": "Si los objetivos tienen unidades distintas, normalizalos (ej: dividir cada uno por su valor óptimo individual) para que sean comparables."
+      },
+      {
+        "paso": "Asignar pesos",
+        "descripcion": "Asigná un peso w_i a cada objetivo según su importancia relativa. Los pesos deben sumar 1."
+      },
+      {
+        "paso": "Construir la función objetivo ponderada",
+        "descripcion": "Armá una sola función objetivo: F(x) = w_1·f_1(x) + w_2·f_2(x) + ... + w_n·f_n(x)."
+      },
+      {
+        "paso": "Resolver el modelo",
+        "descripcion": "Resolvé el problema resultante con el método apropiado (lineal, no lineal, etc.) según la estructura de los objetivos y restricciones."
+      },
+      {
+        "paso": "Analizar la solución de compromiso",
+        "descripcion": "Evaluá el valor de cada criterio individual en la solución óptima. Analizá si el balance entre objetivos es aceptable o si conviene ajustar los pesos."
+      }
+    ],
+    "prog_cuadratica_wolfe": [
+      {
+        "paso": "Formular el problema estándar",
+        "descripcion": "Expresá la función cuadrática en forma matricial: min (1/2)xᵀQx + cᵀx, sujeto a Ax ≤ b, x ≥ 0."
+      },
+      {
+        "paso": "Verificar convexidad",
+        "descripcion": "Verificá que la matriz Q sea semidefinida positiva. Si lo es, el método de Wolfe encontrará el óptimo global."
+      },
+      {
+        "paso": "Plantear las condiciones KKT",
+        "descripcion": "Formulá las condiciones de optimalidad de Karush-Kuhn-Tucker: gradiente de la Lagrangiana = 0, factibilidad primal y dual, complementariedad."
+      },
+      {
+        "paso": "Construir el tableau de Wolfe",
+        "descripcion": "Convertí las condiciones KKT en un sistema lineal equivalente, agregando variables de holgura y artificiales según el método simplex modificado."
+      },
+      {
+        "paso": "Aplicar el algoritmo Simplex modificado",
+        "descripcion": "Iterá el Simplex sobre el tableau respetando la condición de complementariedad: no pueden ser básicas simultáneamente una variable y su multiplicador asociado."
+      },
+      {
+        "paso": "Verificar e interpretar la solución",
+        "descripcion": "Comprobá que la solución satisface todas las condiciones KKT. Reportá el valor óptimo de la función cuadrática y los valores de x."
+      }
+    ],
+    "programacion_geometrica": [
+      {
+        "paso": "Verificar la estructura del problema",
+        "descripcion": "Confirmá que todas las variables son estrictamente positivas (x_i > 0) y que la función objetivo y restricciones son posinomios (sumas de monomios con exponentes reales)."
+      },
+      {
+        "paso": "Calcular el grado de dificultad",
+        "descripcion": "Grado de dificultad = (número total de términos) - (número de variables) - 1. Si es 0, el problema tiene solución directa; si es mayor, requiere optimización del dual."
+      },
+      {
+        "paso": "Formular el problema dual geométrico",
+        "descripcion": "Construí el dual geométrico aplicando la desigualdad aritmética-geométrica. El dual es siempre convexo aunque el primal no lo sea."
+      },
+      {
+        "paso": "Resolver el dual",
+        "descripcion": "Encontrá los pesos duales δ_i que maximizan la función dual. Si el grado de dificultad es 0, se resuelve con un sistema lineal directo."
+      },
+      {
+        "paso": "Recuperar las variables primales",
+        "descripcion": "Usá la relación entre pesos duales y monomios para recuperar los valores de las variables originales x_i."
+      },
+      {
+        "paso": "Verificar la solución",
+        "descripcion": "Sustituí los valores hallados en el problema original y verificá que se cumplan todas las restricciones y que el valor objetivo coincida con el dual."
+      }
+    ],
+    "frank_wolfe": [
+      {
+        "paso": "Elegir un punto inicial factible",
+        "descripcion": "Seleccioná un punto x⁰ que satisfaga todas las restricciones lineales. Puede ser la solución de un problema de fase I del Simplex."
+      },
+      {
+        "paso": "Calcular el gradiente",
+        "descripcion": "Evaluá el gradiente ∇f(xᵏ) de la función objetivo en el punto actual. Este indica la dirección de mayor descenso."
+      },
+      {
+        "paso": "Resolver el subproblema lineal",
+        "descripcion": "Resolvé min ∇f(xᵏ)ᵀ · d sujeto a las restricciones originales. Esto da la dirección de descenso dᵏ (solución de un LP)."
+      },
+      {
+        "paso": "Realizar la búsqueda de línea",
+        "descripcion": "Encontrá el paso óptimo αᵏ ∈ [0,1] que minimiza f(xᵏ + α(dᵏ - xᵏ)). Podés usar búsqueda exacta o de Armijo."
+      },
+      {
+        "paso": "Actualizar la solución",
+        "descripcion": "Calculá xᵏ⁺¹ = xᵏ + αᵏ(dᵏ - xᵏ). El nuevo punto es una combinación convexa del actual y la dirección LP."
+      },
+      {
+        "paso": "Verificar convergencia",
+        "descripcion": "Comprobá si |f(xᵏ⁺¹) - f(xᵏ)| < ε o si el gap de dualidad es suficientemente pequeño. Si no, volvé al paso 2 con el nuevo punto."
+      }
+    ],
+    "programacion_convexa": [
+      {
+        "paso": "Verificar convexidad",
+        "descripcion": "Confirmá que f(x) es convexa (Hessiana semidefinida positiva) y que la región factible es convexa (intersección de conjuntos convexos)."
+      },
+      {
+        "paso": "Plantear las condiciones KKT",
+        "descripcion": "Las condiciones KKT son necesarias y suficientes para optimalidad global en problemas convexos: ∇f + Σλᵢ∇gᵢ = 0, λᵢ ≥ 0, λᵢgᵢ = 0."
+      },
+      {
+        "paso": "Elegir el método de resolución",
+        "descripcion": "Según la estructura, elegí entre: método de punto interior (barreras logarítmicas), descenso por gradiente proyectado, o ADMM para problemas grandes."
+      },
+      {
+        "paso": "Aplicar el método elegido",
+        "descripcion": "Iterá el algoritmo hasta convergencia. En métodos de punto interior, la trayectoria central garantiza factibilidad en cada iteración."
+      },
+      {
+        "paso": "Verificar el óptimo global",
+        "descripcion": "En problemas convexos, cualquier mínimo local es global. Verificá que las condiciones KKT se satisfacen en la solución."
+      },
+      {
+        "paso": "Interpretar la solución",
+        "descripcion": "Reportá los valores óptimos de x, el valor mínimo de f(x) y los multiplicadores de Lagrange λᵢ (que representan el costo marginal de cada restricción)."
+      }
+    ],
+    "pnl_general": [
+      {
+        "paso": "Analizar la estructura del problema",
+        "descripcion": "Identificá si hay no linealidades en la función objetivo, en las restricciones, o en ambas. Determiná si el problema es no convexo (puede tener múltiples óptimos locales)."
+      },
+      {
+        "paso": "Elegir múltiples puntos de inicio",
+        "descripcion": "Generá varios puntos iniciales distintos (aleatoriamente o con criterio) para explorar diferentes regiones del espacio de soluciones y reducir el riesgo de quedar atrapado en un óptimo local."
+      },
+      {
+        "paso": "Calcular gradiente y Hessiana",
+        "descripcion": "Evaluá ∇f(xᵏ) y ∇²f(xᵏ) en el punto actual. La Hessiana permite usar métodos de segundo orden (Newton, BFGS) que convergen más rápido."
+      },
+      {
+        "paso": "Aplicar el algoritmo de descenso",
+        "descripcion": "Usá un método como Newton con paso amortiguado, BFGS (quasi-Newton) o SQP (programación cuadrática secuencial) para actualizar la solución en cada iteración."
+      },
+      {
+        "paso": "Verificar condiciones KKT locales",
+        "descripcion": "Comprobá que la solución encontrada satisface las condiciones KKT. Recordá que en PNL general estas son condiciones de optimalidad local, no global."
+      },
+      {
+        "paso": "Comparar y reportar el mejor óptimo",
+        "descripcion": "Comparé los óptimos locales encontrados desde distintos puntos de inicio. Reportá el mejor valor objetivo hallado e indicá que podrían existir otros óptimos locales no explorados."
+      }
+    ]
   }
 }
