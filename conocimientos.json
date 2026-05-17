@@ -1,5 +1,13 @@
 {
   "metodos": {
+    "explicacion_conceptos": {
+      "simple": "La optimización no lineal trata de encontrar el mejor valor cuando las relaciones no son proporcionales (rectas).",
+      "caso_practico": "Imagina que el costo de energía no es constante, sino que aumenta exponencialmente con el uso.",
+      "ejemplo_estandar": "Un ejemplo común es la minimización del área de un envase para un volumen dado.",
+      "implicancia": "Esto permite ahorrar recursos donde los modelos lineales fallan por ser demasiado simples.",
+      "matematica_formal": "Matemática Formal: Min f(x) sujeto a g_i(x) <= 0, donde f o g_i no son funciones lineales (afines).",
+      "resumen_simple": "Resumen Simple: Buscamos el punto más óptimo en una 'curva' compleja respetando ciertos límites."
+    },
     "programacion_estocastica": {
       "nombre": "Programación Estocástica",
       "porque": "Tu problema involucra incertidumbre, escenarios futuros o datos que varían aleatoriamente, como demanda, costos, tiempos o disponibilidad de recursos.",
