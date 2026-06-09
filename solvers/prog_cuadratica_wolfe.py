@@ -10,6 +10,15 @@ NOMBRE = "Programación Cuadrática (Método de Wolfe)"
 DISPONIBLE = True
 
 
+def _restriccion_cumple(lhs, signo, rhs):
+    tol = 1e-7
+    if signo == "<=":
+        return lhs <= rhs + tol
+    if signo == ">=":
+        return lhs >= rhs - tol
+    return abs(lhs - rhs) <= tol
+
+
 def iniciar():
     st.session_state.solver_data = {}
     st.session_state.solver_step = 0
@@ -69,10 +78,21 @@ def _intentar_resolver(sd):
         kkt_lines.append(f"∇f(x*) = Qx* + c = [{', '.join(f'{g:.4f}' for g in grad)}]")
 
         dual_vals = []
+        restricciones_contexto = []
         for i, con in enumerate(constraint_objs[1:]):  # skip x >= 0
             lam = con.dual_value
             dual_vals.append(lam)
-            g_val = A_rows[i] @ x_opt - b_rows[i]
+            lhs = float(A_rows[i] @ x_opt)
+            rhs = float(b_rows[i])
+            g_val = lhs - rhs
+            restricciones_contexto.append({
+                "lhs": lhs,
+                "signo": signos[i],
+                "rhs": rhs,
+                "cumple": _restriccion_cumple(lhs, signos[i], rhs),
+                "activa": abs(lhs - rhs) < 1e-6,
+                "lambda": float(np.asarray(lam).flat[0]) if lam is not None else None,
+            })
             kkt_lines.append(
                 f"λ{i+1} = {lam:.4f}, g{i+1}(x*) = {g_val:.4f}"
                 + (" ← activa" if abs(g_val) < 1e-6 else "")
