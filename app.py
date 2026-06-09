@@ -1,6 +1,6 @@
 import streamlit as st
 
-from core.estado import init_session_state, reset_state
+from core.estado import MENU_INICIAL, init_session_state, reset_state
 from core.nlp import detectar_intencion, detectar_si_no, contiene_frase
 from flujos.clasificar import procesar_clasificar
 from flujos.explicar import procesar_explicar
@@ -16,11 +16,98 @@ st.set_page_config(
 
 init_session_state()
 
+FRASES_VOLVER_MENU = [
+    "cancelar",
+    "salir",
+    "volver al menu",
+    "volver al menu inicial",
+    "volvamos al menu",
+    "volvamos al menu inicial",
+    "menu inicial",
+    "ir al menu",
+    "ir al menu inicial",
+    "reiniciar",
+]
+
+
+def _formatear_numero(valor, max_decimales=4):
+    valor = float(valor)
+    if abs(valor) < 1e-10:
+        valor = 0.0
+
+    texto = f"{valor:.{max_decimales}f}".rstrip("0").rstrip(".")
+    return texto if texto and texto != "-0" else "0"
+
+
+def _quiere_interpretar_resultado(entrada):
+    return contiene_frase(
+        entrada,
+        [
+            "que significa",
+            "significa",
+            "interpretar",
+            "interpretame",
+            "explicar resultado",
+            "explicame resultado",
+            "resultado",
+            "resultados",
+            "solucion de compromiso",
+            "compromiso",
+            "solucion optima",
+            "por que",
+        ],
+    )
+
+
+def _explicar_ultimo_resultado():
+    contexto = st.session_state.get("last_solution_context")
+    if not contexto:
+        return None
+
+    if contexto.get("metodo") != "combinaciones_lineales":
+        return None
+
+    variables = contexto.get("variables", [])
+    objetivos = contexto.get("objetivos", [])
+    restricciones = contexto.get("restricciones", [])
+
+    variables_txt = ", ".join(
+        f"x{i+1}={_formatear_numero(valor)}" for i, valor in enumerate(variables)
+    )
+    objetivos_txt = "\n".join(
+        f"- f{i+1}(x) = {_formatear_numero(obj['valor'])} "
+        f"({'minimizar' if obj['tipo'] == 'min' else 'maximizar'}, "
+        f"peso w{i+1}={_formatear_numero(obj['peso'], 2)})"
+        for i, obj in enumerate(objetivos)
+    )
+
+    if restricciones:
+        restricciones_txt = "\n".join(
+            f"- R{i+1}: {_formatear_numero(rest['lhs'])} {rest['signo']} "
+            f"{_formatear_numero(rest['rhs'])} "
+            f"({'se cumple' if rest['cumple'] else 'no se cumple'})"
+            for i, rest in enumerate(restricciones)
+        )
+    else:
+        restricciones_txt = "- No se cargaron restricciones adicionales; se mantienen las cotas x >= 0."
+
+    return (
+        f"La solución **{variables_txt}** significa que esos son los valores óptimos "
+        f"que debe tomar cada variable de decisión para el modelo que cargaste.\n\n"
+        f"Están dentro de la **región factible** porque satisfacen las restricciones:\n"
+        f"{restricciones_txt}\n\n"
+        f"En este punto, los objetivos quedan así:\n{objetivos_txt}\n\n"
+        f"Es una **solución de compromiso** porque el problema tiene más de un objetivo: "
+        f"no se eligió optimizar un único criterio aislado, sino una combinación ponderada. "
+        f"Los pesos reflejan la importancia relativa de cada objetivo; por ejemplo, un peso "
+        f"más alto hace que ese objetivo tenga más influencia en la solución final."
+    )
+
 
 def procesar_respuesta(entrada):
-    if contiene_frase(entrada, ["cancelar", "salir"]):
+    if contiene_frase(entrada, FRASES_VOLVER_MENU):
         reset_state()
-        return "Flujo cancelado. ¿Qué preferís: **Clasificar**, **Resolver** o **Explicar**?"
+        return "Volvimos al menú inicial.\n\n" + MENU_INICIAL
 
     # Bonus 2.2: pending tiene el método incorporado
     pending = st.session_state.get("pending_after_classification")
@@ -45,16 +132,15 @@ def procesar_respuesta(entrada):
     if flow in SOLVERS:
         return SOLVERS[flow].procesar(entrada)
 
+    if _quiere_interpretar_resultado(entrada):
+        explicacion = _explicar_ultimo_resultado()
+        if explicacion:
+            return explicacion
+
     intencion = detectar_intencion(entrada)
 
     if intencion == "saludo":
-        return (
-            "¡Hola! 👋 Soy tu asistente de IO. Puedo ayudarte a:\n"
-            "1. **Clasificar** un modelo.\n"
-            "2. **Resolver** un problema.\n"
-            "3. **Explicar** conceptos.\n\n"
-            "¿Por dónde empezamos?"
-        )
+        return MENU_INICIAL
     if intencion == "clasificar":
         st.session_state.current_flow = "clasificar"
         st.session_state.steps["clasificar"] = 0

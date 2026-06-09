@@ -50,6 +50,30 @@ def _parsear_expresion(texto, n):
         return None, None, None
 
 
+def _restriccion_cumple(lhs, signo, rhs):
+    tol = 1e-7
+    if signo == "<=":
+        return lhs <= rhs + tol
+    if signo == ">=":
+        return lhs >= rhs - tol
+    return abs(lhs - rhs) <= tol
+
+
+def _evaluar_restricciones(restricciones, x, n):
+    evaluadas = []
+    for coefs, signo, rhs in restricciones:
+        row = np.array((list(coefs) + [0] * n)[:n], dtype=float)
+        lhs = float(row @ x)
+        rhs = float(rhs)
+        evaluadas.append({
+            "lhs": lhs,
+            "signo": signo,
+            "rhs": rhs,
+            "cumple": _restriccion_cumple(lhs, signo, rhs),
+        })
+    return evaluadas
+
+
 def _correr_frank_wolfe(sd):
     n = sd["n_vars"]
     f_call = sd["f_callable"]
@@ -147,6 +171,18 @@ def _intentar_resolver(sd):
         f_opt = float(sd["f_callable"](*x_opt))
         n_iter = len(iteraciones)
         gap_final = iteraciones[-1]["gap"] if iteraciones else 0
+        tol = sd.get("tol", 1e-4)
+
+        st.session_state.last_solution_context = {
+            "metodo": ID,
+            "variables": [float(v) for v in x_opt[:n]],
+            "valor_objetivo": f_opt,
+            "iteraciones": n_iter,
+            "gap_final": float(gap_final),
+            "tol": float(tol),
+            "convergio": bool(iteraciones and gap_final < tol),
+            "restricciones": _evaluar_restricciones(sd.get("restricciones", []), x_opt, n),
+        }
 
         reset_state()
         return (

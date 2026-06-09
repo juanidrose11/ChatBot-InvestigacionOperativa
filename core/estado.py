@@ -1,6 +1,15 @@
 import streamlit as st
 
 
+MENU_INICIAL = (
+    "¡Hola! 👋 Soy tu asistente de IO. Puedo ayudarte a:\n\n"
+    "1. **Clasificar** un modelo.\n"
+    "2. **Resolver** un problema.\n"
+    "3. **Explicar** conceptos.\n\n"
+    "¿Por dónde empezamos?"
+)
+
+
 def reset_state():
     st.session_state.current_flow = "idle"
     st.session_state.steps = {"clasificar": 0, "resolver": 0, "explicar": 0}
@@ -19,9 +28,11 @@ def init_session_state():
         st.session_state.guia_actual = []
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "¡Hola! Soy tu asistente de IO. Enviame tu problema de IO y te ayudaré a resolverlo."}
+            {"role": "assistant", "content": MENU_INICIAL}
         ]
     if "solver_data" not in st.session_state:
         st.session_state.solver_data = {}
     if "solver_step" not in st.session_state:
         st.session_state.solver_step = 0
+    if "last_solution_context" not in st.session_state:
+        st.session_state.last_solution_context = None

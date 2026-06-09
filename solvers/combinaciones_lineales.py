@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 from scipy.optimize import linprog
 import streamlit as st
@@ -8,6 +10,45 @@ from core.estado import reset_state
 ID = "combinaciones_lineales"
 NOMBRE = "Método de Combinaciones Lineales"
 DISPONIBLE = True
+
+PATRON_NUMERO = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)"
+
+
+def _parsear_objetivo(entrada, n):
+    tipo = "max" if contiene_frase(entrada, ["max", "maximizar"]) else "min"
+    texto = normalizar(entrada)
+    texto = re.sub(r"\b(maximizar|max|minimizar|min)\b", "", texto)
+    texto = texto.replace(",", " ")
+    partes = texto.split()
+
+    if len(partes) != n:
+        return None, tipo
+
+    coefs = []
+    for parte in partes:
+        if not re.fullmatch(PATRON_NUMERO, parte):
+            return None, tipo
+        coefs.append(float(parte))
+
+    return coefs, tipo
+
+
+def _formatear_numero(valor, max_decimales=4):
+    valor = float(valor)
+    if abs(valor) < 1e-10:
+        valor = 0.0
+
+    texto = f"{valor:.{max_decimales}f}".rstrip("0").rstrip(".")
+    return texto if texto and texto != "-0" else "0"
+
+
+def _restriccion_cumple(lhs, signo, rhs):
+    tol = 1e-7
+    if signo == "<=":
+        return lhs <= rhs + tol
+    if signo == ">=":
+        return lhs >= rhs - tol
+    return abs(lhs - rhs) <= tol
 
 
 def iniciar():
@@ -63,18 +104,46 @@ def _intentar_resolver(sd):
         result = _resolver(sd)
         if result.success:
             n = sd["n_vars"]
-            vars_str = "\n".join([f"  x{i+1} = {result.x[i]:.4f}" for i in range(n)])
+            vars_str = "\n".join([f"  x{i+1} = {_formatear_numero(result.x[i])}" for i in range(n)])
 
             obj_lines = []
+            objetivos_contexto = []
             for i, (obj, tipo) in enumerate(zip(sd["objetivos"], sd["tipos"])):
                 coefs = np.array(obj[:n])
                 if len(coefs) < n:
                     coefs = np.pad(coefs, (0, n - len(coefs)))
                 val = float(np.dot(coefs, result.x))
-                obj_lines.append(f"  f{i+1}(x) = {val:.4f}  ({tipo}imizar, w={sd['pesos'][i]:.2f})")
+                objetivos_contexto.append({
+                    "valor": val,
+                    "tipo": tipo,
+                    "peso": float(sd["pesos"][i]),
+                })
+                obj_lines.append(
+                    f"  f{i+1}(x) = {_formatear_numero(val)}  "
+                    f"({tipo}imizar, w={_formatear_numero(sd['pesos'][i], 2)})"
+                )
 
             obj_str = "\n".join(obj_lines)
-            peso_str = "  " + ",  ".join([f"w{i+1}={sd['pesos'][i]:.2f}" for i in range(sd["n_obj"])])
+            peso_str = "  " + ",  ".join(
+                [f"w{i+1}={_formatear_numero(sd['pesos'][i], 2)}" for i in range(sd["n_obj"])]
+            )
+            restricciones_contexto = []
+            for coefs, signo, rhs in sd.get("restricciones", []):
+                row = np.array((list(coefs) + [0] * n)[:n], dtype=float)
+                lhs = float(row @ result.x)
+                restricciones_contexto.append({
+                    "lhs": lhs,
+                    "signo": signo,
+                    "rhs": float(rhs),
+                    "cumple": _restriccion_cumple(lhs, signo, float(rhs)),
+                })
+
+            st.session_state.last_solution_context = {
+                "metodo": ID,
+                "variables": [float(v) for v in result.x[:n]],
+                "objetivos": objetivos_contexto,
+                "restricciones": restricciones_contexto,
+            }
 
             reset_state()
             st.session_state.solver_data = {}
@@ -122,10 +191,13 @@ def _procesar(entrada):
         )
 
     if 2 <= step < 2 + sd.get("n_obj", 0):
-        nums = parsear_numeros(entrada)
-        if not nums:
-            return "No pude leer los coeficientes. Ej: `3, 5 minimizar`"
-        tipo = "max" if contiene_frase(normalizar(entrada), ["max", "maximizar"]) else "min"
+        nums, tipo = _parsear_objetivo(entrada, sd["n_vars"])
+        if nums is None:
+            return (
+                f"Los coeficientes deben ser solo números y tienen que ser exactamente "
+                f"{sd['n_vars']} valores.\n\n"
+                f"Ej: `3, 5 minimizar`"
+            )
         sd["objetivos"].append(nums)
         sd["tipos"].append(tipo)
         st.session_state.solver_step += 1

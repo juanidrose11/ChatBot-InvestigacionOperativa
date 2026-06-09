@@ -40,6 +40,15 @@ def parsear_restriccion(texto):
 
 
 def detectar_intencion(texto):
+    texto_norm = normalizar(texto)
+
+    if re.fullmatch(r"(opcion\s*)?1[\.\)]?", texto_norm):
+        return "clasificar"
+    if re.fullmatch(r"(opcion\s*)?2[\.\)]?", texto_norm):
+        return "resolver"
+    if re.fullmatch(r"(opcion\s*)?3[\.\)]?", texto_norm):
+        return "explicar"
+
     if contiene_frase(texto, ["hola", "buenas", "que tal", "saludos"]):
         return "saludo"
     if contiene_frase(
